@@ -1,6 +1,18 @@
 # OS Conecta para Android
 
-Aplicativo Android que abre o catálogo de modelos de encerramento de OS em uma WebView local. Os modelos e dados são processados no aparelho; o app oferece cópia e compartilhamento do texto montado.
+Aplicativo Android para gerar encerramentos de OS de telecomunicações. A interface é publicada no GitHub Pages e o WebView carrega a versão publicada ao abrir; quando estiver sem internet, usa a versão HTML que veio no APK. Os rascunhos, favoritos e histórico ficam no armazenamento local do aparelho.
+
+## Recursos
+
+- Catálogo de códigos dos blocos A a Q, busca, seleção múltipla, favoritos e códigos recentes.
+- Dados de OS, equipamentos, testes, checklist e adversidades de campo.
+- Prévia editável, cópia e compartilhamento do texto final.
+- Histórico local com pesquisa e exportação CSV; rascunho salvo automaticamente e opção para recuperar.
+- Tema claro, escuro ou automático e funcionamento offline após abrir a versão publicada ao menos uma vez.
+
+## Atualizações da interface
+
+O workflow `.github/workflows/deploy-pages.yml` publica a interface do diretório de assets no GitHub Pages sempre que há push na branch `main`. O APK já instalado busca essa versão ao iniciar. Uma atualização da interface não exige reinstalar o APK. Mudanças nativas do Android (permissões, integração com o sistema ou código Java) ainda exigem compilar e instalar uma nova versão do APK. O GitHub Pages precisa estar habilitado para o repositório com origem GitHub Actions.
 
 ## Gerar APK
 

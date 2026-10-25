@@ -12,9 +12,12 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.WebResourceError;
 
 public class MainActivity extends Activity {
+    private static final String APP_URL = "https://ernestogodoi4-ship-it.github.io/OsConecta/";
     private WebView web;
+    private boolean offlineFallback = false;
 
     @Override
     protected void onCreate(Bundle b) {
@@ -25,20 +28,32 @@ public class MainActivity extends Activity {
         WebSettings s = web.getSettings();
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);
+        s.setCacheMode(WebSettings.LOAD_NO_CACHE); // busca a publicação mais recente ao iniciar
         s.setAllowFileAccess(false); // arquivos em /android_asset continuam acessíveis
+        s.setAllowContentAccess(false);
         web.addJavascriptInterface(new Bridge(), "Android");
         web.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView v, WebResourceRequest r) {
                 Uri u = r.getUrl();
+                if ("https".equals(u.getScheme()) && "ernestogodoi4-ship-it.github.io".equals(u.getHost()) && u.getPath().startsWith("/OsConecta/")) return false;
                 if ("http".equals(u.getScheme()) || "https".equals(u.getScheme())) {
                     startActivity(new Intent(Intent.ACTION_VIEW, u));
                     return true;
                 }
                 return false;
             }
+
+            @Override
+            public void onReceivedError(WebView v, WebResourceRequest r, WebResourceError e) {
+                super.onReceivedError(v, r, e);
+                if (r.isForMainFrame() && !offlineFallback) {
+                    offlineFallback = true;
+                    v.loadUrl("file:///android_asset/index.html");
+                }
+            }
         });
-        if (b == null) web.loadUrl("file:///android_asset/index.html");
+        if (b == null) web.loadUrl(APP_URL);
         else web.restoreState(b);
     }
 
