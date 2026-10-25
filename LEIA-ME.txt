@@ -1,0 +1,10 @@
+OS CONECTA - gerar o APK sem instalar nada (GitHub Actions)
+1. Crie conta gratuita em github.com e um repositorio novo (pode ser privado).
+2. Envie TODO o conteudo desta pasta para o repositorio (Add file > Upload files),
+   incluindo a pasta oculta .github.
+3. Aba "Actions" > "Build APK" > espere ~4 min (ou clique Run workflow).
+4. Abra a execucao concluida e baixe "OSConecta-apk" em Artifacts (zip com o app-debug.apk).
+5. Instale no celular (permitir fontes desconhecidas).
+
+Alternativa: abrir esta pasta no Android Studio e usar Build > Build APK(s).
+
