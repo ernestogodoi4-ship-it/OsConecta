@@ -35,3 +35,11 @@ gradle assembleDebug
 
 Saída: `app/build/outputs/apk/debug/app-debug.apk`.
 
+## Checklist auxiliar de segurança
+
+A aba **Segurança** contém uma conferência operacional separada do encerramento da OS. Os estados são salvos localmente por número de protocolo e não entram no texto gerado, no histórico ou nas exportações do encerramento. A lista cobre planejamento/APR, ambiente, acesso, trânsito, poste e risco elétrico, altura e resposta a emergência, EPI, risco óptico e fragmentos de fibra.
+
+O checklist é uma ajuda de memória e não substitui o PGR, a APR/AR, procedimentos internos, treinamento, autorização, definição de EPI ou plano de emergência/resgate. Foi elaborado como ferramenta auxiliar com base nas páginas oficiais do MTE para [NR-01](https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/comissao-tripartite-paritaria-permanente/normas-regulamentadora/normas-regulamentadoras-vigentes/nr-1), [NR-06](https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/comissao-tripartite-paritaria-permanente/normas-regulamentadora/normas-regulamentadoras-vigentes/nr-6-nr-6), [NR-10](https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/comissao-tripartite-paritaria-permanente/normas-regulamentadora/normas-regulamentadoras-vigentes/norma-regulamentadora-no-10-nr-10) e [NR-35](https://www.gov.br/trabalho-e-emprego/pt-br/acesso-a-informacao/participacao-social/conselhos-e-orgaos-colegiados/comissao-tripartite-paritaria-permanente/normas-regulamentadora/normas-regulamentadoras-vigentes/nr-35-nr-35). Consulte as versões vigentes e os requisitos da organização.
+
+A Viva Telecom apresenta publicamente serviços de conectividade por fibra e atendimento regional; o site institucional não publica procedimento de segurança de campo, então nenhum procedimento interno foi inferido como política da empresa: https://vivastelecom.com.br/.
+
