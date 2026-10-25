@@ -125,7 +125,6 @@ $('#exportTxt').onclick=()=>{const txt=history().map(x=>`${x.date} | ${x.client}
 $('#favFilter').onclick=()=>{S.onlyFav=!S.onlyFav;S.onlyRecent=false;$('#favFilter').textContent=S.onlyFav?'★ Ver todos':'☆ Favoritos';$('#favFilter').classList.toggle('on',S.onlyFav);$('#recentFilter').classList.remove('on');drawList()};$('#recentFilter').onclick=()=>{S.onlyRecent=!S.onlyRecent;S.onlyFav=false;$('#recentFilter').textContent=S.onlyRecent?'◷ Ver todos':'◷ Recentes';$('#recentFilter').classList.toggle('on',S.onlyRecent);$('#favFilter').classList.remove('on');drawList()};
 $('#theme').onchange=()=>{document.body.dataset.theme=$('#theme').value;localStorage.setItem('osconecta.theme',$('#theme').value)};try{$('#theme').value=localStorage.getItem('osconecta.theme')||'auto';document.body.dataset.theme=$('#theme').value}catch(_){}
 $('#copy').addEventListener('click',()=>{if(S.sel.length)addHistory($('#preview').value)});$('#share').addEventListener('click',()=>{if(S.sel.length)addHistory($('#preview').value)});
-try{if('serviceWorker'in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('./sw.js')}catch(_){}
 drawList();
 </script></body></html>
 

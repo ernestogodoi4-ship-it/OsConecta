@@ -1,6 +1,6 @@
 # OS Conecta para Android
 
-Aplicativo Android para gerar encerramentos de OS de telecomunicações. A interface é publicada no GitHub Pages e o WebView carrega a versão publicada ao abrir; quando estiver sem internet, usa a versão HTML que veio no APK. Os rascunhos, favoritos e histórico ficam no armazenamento local do aparelho.
+Aplicativo Android para gerar encerramentos de OS de telecomunicações. Ao iniciar, o app busca a interface HTML mais recente no arquivo público deste repositório; sem internet, abre a versão embutida no APK. Rascunhos, favoritos e histórico ficam no armazenamento local do aparelho.
 
 ## Recursos
 
@@ -12,7 +12,7 @@ Aplicativo Android para gerar encerramentos de OS de telecomunicações. A inter
 
 ## Atualizações da interface
 
-O workflow `.github/workflows/deploy-pages.yml` publica a interface do diretório de assets no GitHub Pages sempre que há push na branch `main`. O APK já instalado busca essa versão ao iniciar. Uma atualização da interface não exige reinstalar o APK. Mudanças nativas do Android (permissões, integração com o sistema ou código Java) ainda exigem compilar e instalar uma nova versão do APK. O GitHub Pages precisa estar habilitado para o repositório com origem GitHub Actions.
+O APK consulta `app/src/main/assets/index.html` na branch `main` ao abrir, sem cache, e usa o HTML local se a consulta falhar. Assim, alterações de telas, catálogo e regras JavaScript aparecem no app instalado após publicação no GitHub, sem reinstalação. Mudanças nativas do Android (permissões, integração com o sistema ou código Java) exigem compilar e instalar um APK novo.
 
 ## Gerar APK
 

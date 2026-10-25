@@ -7,15 +7,22 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.webkit.WebResourceError;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 public class MainActivity extends Activity {
-    private static final String APP_URL = "https://ernestogodoi4-ship-it.github.io/OsConecta/";
+    private static final String APP_URL = "https://raw.githubusercontent.com/ernestogodoi4-ship-it/OsConecta/main/app/src/main/assets/index.html";
     private WebView web;
     private boolean offlineFallback = false;
 
@@ -28,7 +35,7 @@ public class MainActivity extends Activity {
         WebSettings s = web.getSettings();
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);
-        s.setCacheMode(WebSettings.LOAD_NO_CACHE); // busca a publicação mais recente ao iniciar
+        s.setCacheMode(WebSettings.LOAD_NO_CACHE);
         s.setAllowFileAccess(false); // arquivos em /android_asset continuam acessíveis
         s.setAllowContentAccess(false);
         web.addJavascriptInterface(new Bridge(), "Android");
@@ -36,7 +43,7 @@ public class MainActivity extends Activity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView v, WebResourceRequest r) {
                 Uri u = r.getUrl();
-                if ("https".equals(u.getScheme()) && "ernestogodoi4-ship-it.github.io".equals(u.getHost()) && u.getPath().startsWith("/OsConecta/")) return false;
+                if ("https".equals(u.getScheme()) && "raw.githubusercontent.com".equals(u.getHost()) && u.getPath().startsWith("/ernestogodoi4-ship-it/OsConecta/")) return false;
                 if ("http".equals(u.getScheme()) || "https".equals(u.getScheme())) {
                     startActivity(new Intent(Intent.ACTION_VIEW, u));
                     return true;
@@ -53,8 +60,44 @@ public class MainActivity extends Activity {
                 }
             }
         });
-        if (b == null) web.loadUrl(APP_URL);
+        if (b == null) loadLatestInterface();
         else web.restoreState(b);
+    }
+
+    private void loadLatestInterface() {
+        new Thread(() -> {
+            String html = null;
+            HttpURLConnection connection = null;
+            try {
+                connection = (HttpURLConnection) new URL(APP_URL).openConnection();
+                connection.setConnectTimeout(5000);
+                connection.setReadTimeout(8000);
+                connection.setUseCaches(false);
+                connection.setRequestProperty("Cache-Control", "no-cache");
+                if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    StringBuilder content = new StringBuilder();
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
+                        String line;
+                        while ((line = reader.readLine()) != null) content.append(line).append('\n');
+                    }
+                    String candidate = content.toString();
+                    if (candidate.toLowerCase().contains("<html") && candidate.contains("id=\"catalog\"")) html = candidate;
+                }
+            } catch (Exception ignored) {
+                // Sem internet ou arquivo remoto indisponível: abre a interface embutida no APK.
+            } finally {
+                if (connection != null) connection.disconnect();
+            }
+            final String latest = html;
+            new Handler(Looper.getMainLooper()).post(() -> {
+                if (isFinishing()) return;
+                if (latest != null) web.loadDataWithBaseURL("https://raw.githubusercontent.com/ernestogodoi4-ship-it/OsConecta/main/", latest, "text/html", "UTF-8", null);
+                else {
+                    offlineFallback = true;
+                    web.loadUrl("file:///android_asset/index.html");
+                }
+            });
+        }).start();
     }
 
     @Override
