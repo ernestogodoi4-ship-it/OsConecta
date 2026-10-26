@@ -49,3 +49,11 @@ A Viva Telecom apresenta publicamente serviços de conectividade por fibra e ate
 O app consulta a GitHub Release mais recente ao iniciar. Quando detecta versão mais nova, oferece baixar o APK; o Android exige que a pessoa confirme a instalação. Um push na branch `main` compila o APK. O release atualiza e anexa APK somente quando a assinatura permanente está configurada nos Actions secrets `ANDROID_KEYSTORE_BASE64`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_ALIAS` e `ANDROID_KEY_PASSWORD`; sem eles, gera apenas APK debug de teste, que não serve para atualizações contínuas.
 
 Para publicar uma versão assinada, incremente `versionCode` e `versionName` em `app/build.gradle`, configure os quatro secrets do keystore em **Settings → Secrets and variables → Actions** e execute o workflow. Preserve o mesmo keystore para todas as versões. O APK 1.2.0 existente foi assinado por uma chave de CI temporária; para migrar para a assinatura permanente, será necessário instalar manualmente a primeira versão assinada. O Android não permite atualizar um app com certificado de assinatura diferente; exporte os dados locais antes de remover a versão antiga.
+
+Exemplo de geração local do keystore (guarde uma cópia de segurança em local protegido):
+
+```sh
+keytool -genkeypair -v -keystore osconecta-release.jks -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias osconecta
+```
+
+Cadastre a senha do keystore em `ANDROID_KEYSTORE_PASSWORD`, o alias em `ANDROID_KEY_ALIAS`, a senha da chave em `ANDROID_KEY_PASSWORD` e o conteúdo Base64 do arquivo em `ANDROID_KEYSTORE_BASE64`. No PowerShell, gere o Base64 com `[Convert]::ToBase64String([IO.File]::ReadAllBytes('osconecta-release.jks'))`. Não publique o keystore nem as senhas no repositório.
