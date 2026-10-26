@@ -46,4 +46,4 @@ A Viva Telecom apresenta publicamente serviços de conectividade por fibra e ate
 
 ## Release e APK
 
-O envio de uma tag `v*` compila o APK debug e cria um GitHub Release com o arquivo anexado. A versão atual do projeto é 1.2.0 (versionCode 3). O APK debug é para instalação e avaliação; distribuição formal deve usar APK assinado pela organização.
+Um push na branch `main` compila o APK debug e cria um GitHub Release com o arquivo anexado, usando a `versionName` do projeto como tag, caso esse release ainda não exista. Para publicar uma nova versão, incremente `versionCode` e `versionName` em `app/build.gradle`. A versão atual do projeto é 1.2.0 (versionCode 3). O APK debug é para instalação e avaliação; distribuição formal deve usar APK assinado pela organização.
