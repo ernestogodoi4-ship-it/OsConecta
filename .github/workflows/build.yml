@@ -1,7 +1,11 @@
 name: Build APK
 on:
   push:
+    branches: [main]
+    tags: ['v*']
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,6 +24,14 @@ jobs:
         with:
           name: OSConecta-apk
           path: app/build/outputs/apk/debug/app-debug.apk
-
+      - name: Publicar release com APK
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" app/build/outputs/apk/debug/app-debug.apk \
+            --title "OS Conecta $GITHUB_REF_NAME" \
+            --notes "Checklist de segurança de campo separado do encerramento da OS. Inclui conferências para deslocamento, ambiente, poste/rede elétrica, altura e resgate, caixas subterrâneas e escavações (quando aplicável), risco óptico e fragmentos de fibra, ferramentas, produtos de limpeza e ergonomia. Os registros do checklist permanecem localmente no aparelho e não são copiados, exportados ou incluídos no histórico do texto final. Referências de desenho: NR-01, NR-06, NR-10, NR-17, NR-18, NR-33 e NR-35; aplicabilidade conforme atividade e avaliação de riscos. O site público da Viva Telecom apresenta seus serviços de fibra, sem publicar procedimento interno de segurança. APK de depuração para instalação/teste." \
+            --verify-tag
 
 
