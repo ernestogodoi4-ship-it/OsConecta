@@ -30,6 +30,10 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.webkit.WebResourceError;
+import androidx.work.ExistingPeriodicWorkPolicy;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+import java.util.concurrent.TimeUnit;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -89,8 +93,13 @@ public class MainActivity extends Activity {
         if (b == null) loadLatestInterface();
         else web.restoreState(b);
         checkForAppUpdate();
+        scheduleProtocolBackup();
     }
 
+    private void scheduleProtocolBackup() {
+        PeriodicWorkRequest request = new PeriodicWorkRequest.Builder(ProtocolBackupWorker.class, 12, TimeUnit.HOURS).build();
+        WorkManager.getInstance(getApplicationContext()).enqueueUniquePeriodicWork(ProtocolBackupWorker.WORK_NAME, ExistingPeriodicWorkPolicy.KEEP, request);
+    }
     private void checkForAppUpdate() {
         new Thread(() -> {
             HttpURLConnection connection = null;
@@ -294,6 +303,11 @@ public class MainActivity extends Activity {
     }
 
     class Bridge {
+        @JavascriptInterface
+        public void saveProtocolData(final String json) {
+            getSharedPreferences("osconecta_protocols", MODE_PRIVATE).edit().putString("records", json == null ? "[]" : json).apply();
+        }
+
         @JavascriptInterface
         public void copy(final String t) {
             runOnUiThread(() -> {
