@@ -8,6 +8,12 @@ import android.content.Context;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
+import android.content.ContentValues;
+import android.provider.MediaStore;
+import android.util.Base64;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import android.content.IntentFilter;
 import android.content.ActivityNotFoundException;
 import android.graphics.Color;
@@ -296,6 +302,42 @@ public class MainActivity extends Activity {
             });
         }
 
+        @JavascriptInterface
+        public void saveBackupFile(final String fileName, final String encoded, final String backupMonth) {
+            final String safeName = (fileName == null ? "OSConecta-Protocolos.xlsx" : fileName).replaceAll("[^A-Za-z0-9._-]", "_");
+            final String safeMonth = backupMonth == null ? "" : backupMonth.replaceAll("[^0-9-]", "");
+            new Thread(() -> {
+                boolean saved = false;
+                try {
+                    byte[] bytes = Base64.decode(encoded, Base64.DEFAULT);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        ContentValues values = new ContentValues();
+                        values.put(MediaStore.MediaColumns.DISPLAY_NAME, safeName);
+                        values.put(MediaStore.MediaColumns.MIME_TYPE, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+                        values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/OS Conecta");
+                        Uri uri = getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
+                        if (uri != null) {
+                            try (OutputStream output = getContentResolver().openOutputStream(uri)) {
+                                if (output != null) { output.write(bytes); output.flush(); saved = true; }
+                            }
+                        }
+                    } else {
+                        File directory = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS);
+                        if (directory == null) directory = getFilesDir();
+                        if (!directory.exists()) directory.mkdirs();
+                        try (FileOutputStream output = new FileOutputStream(new File(directory, safeName))) {
+                            output.write(bytes); output.flush(); saved = true;
+                        }
+                    }
+                } catch (Exception ignored) { }
+                final boolean result = saved;
+                new Handler(Looper.getMainLooper()).post(() -> {
+                    if (web == null) return;
+                    String callback = "window.onProtocolBackupSaved && window.onProtocolBackupSaved(" + JSONObject.quote(safeMonth) + "," + result + ")";
+                    web.evaluateJavascript(callback, null);
+                });
+            }).start();
+        }
         @JavascriptInterface
         public void share(final String t) {
             runOnUiThread(() -> {
